@@ -6,20 +6,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ExpandableRow from './ExpandableRow';
+import { createData } from '../utils/createData';
 
-function createData(domain, time) {
-  return { domain, time, pages: [
-      {
-        url: 'https://mui.com/material-ui/material-icons/',
-        time: '12 minutes',
-      },
-      {
-        url: 'https://www.youtube.com/watch?v=o1chMISeTC0',
-        time: '1 minute',
-      },
-    ]
-  };
-}
 
 const rows = [
   createData('Youtube.com', '12 hours'),
@@ -52,7 +40,7 @@ export default function TimeTable() {
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 500 }}>
-        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 350}} aria-label="simple table">
+        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 400}} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="left"></TableCell>
