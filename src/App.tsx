@@ -1,15 +1,13 @@
 import React from 'react';
-import Alert from '@mui/material/Alert';
-import BasicTable from './components/Table';
+import TimeTable from './components/Table';
+import Header from './components/Header';
 
 function App() {
   return (
     <div className="App">
-      <header>
-        <Alert severity="success">TimeMinder is live!</Alert>
-      </header>
+      <Header></Header>
       <body>
-        <BasicTable/>
+        <TimeTable/>
       </body>
     </div>
   );
