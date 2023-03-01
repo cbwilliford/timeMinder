@@ -10,17 +10,16 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { createData } from '../utils/createData';
+import {Hostname, Page} from '../types';
 
-
-export default function ExpandableRow(props: { row: ReturnType<typeof createData> }) {
+export default function ExpandableRow(props: { row: Hostname }) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
 
   return (
     <React.Fragment>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
+        <TableCell align="center">
           <IconButton
             aria-label="expand row"
             size="small"
@@ -30,9 +29,9 @@ export default function ExpandableRow(props: { row: ReturnType<typeof createData
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.domain}
+          {row.hostname}
         </TableCell>
-        <TableCell>{row.time}</TableCell>
+        <TableCell>{row.msElapsed}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -43,12 +42,12 @@ export default function ExpandableRow(props: { row: ReturnType<typeof createData
               </Typography>
               <Table size="small" aria-label="pages">
                 <TableBody>
-                  {row.pages.map((page) => (
+                  {row.pages!.map((page: Page) => (
                     <TableRow key={page.url}>
                       <TableCell component="th" scope="row">
                         {page.url}
                       </TableCell>
-                      <TableCell>{page.time}</TableCell>
+                      <TableCell>{page.msElapsed}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

@@ -6,41 +6,18 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ExpandableRow from './ExpandableRow';
-import { createData } from '../utils/createData';
+import {Hostnames} from '../types';
 
 
-const rows = [
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-  createData('Youtube.com', '12 hours'),
-  createData('Facebook.com', '1 hours'),
-  createData('HubSpot.com', '2 hours'),
-  createData('Twitter.com', '110 hours'),
-];
 
-export default function TimeTable() {
+export default function TimeTable(props:{rows: Hostnames}) {
+
+  const rows = props.rows;
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 500 }}>
-        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 400}} aria-label="simple table">
+        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 375}} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="left"></TableCell>
@@ -49,8 +26,8 @@ export default function TimeTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <ExpandableRow key={row.domain} row={row} />
+            {Object.keys(rows).map((key: string) => (
+              <ExpandableRow key={rows[key].hostname} row={rows[key]} />
             ))}
               <TableRow
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
