@@ -12,6 +12,7 @@ const storageCache: StorageCache = {
   lastUpdated: Date.now(),
   hostnames: {},
   secondsOffset: 0,
+  msElapsed: 0,
 };
 
 const initStorageCache = chrome.storage.local.get(null).then((storage) => {
@@ -37,13 +38,21 @@ const storeActivePage = (storageCache: StorageCache) =>  {
     // 2. Update activePage
     activePage.msElapsed = msElapsed;
     // 3. Update hostname obj or locate it on storageCache
-    // This logic currently adds every page view. Merge page views of same url to sum msElapsed
     const hostnameObj = hostnames[hostname]
-    hostnameObj.pages!.push(activePage)
-    hostnameObj.msElapsed =+ msElapsed;
+    const existingPage = hostnameObj.pages!.find(page => page.url === activePage.url);
+    if (existingPage) {
+      // Merge page views by URL: msElapsed & visits
+      existingPage.msElapsed += msElapsed;
+      existingPage.visits ++;
+    } else {
+      hostnameObj.pages!.push(activePage)
+    }
+
+    hostnameObj.msElapsed += msElapsed;
     // 4. add page to hostname
     storageCache.hostnames[hostname] = hostnameObj;
-    // ADD: top-level key in storage for 'totalMsElapsed'. Update that here to avoid summing all msElapsed values on every render.
+    // Update total msElapsed to avoid summing all msElapsed values on every render.
+    storageCache.msElapsed += msElapsed;
 }
 
 

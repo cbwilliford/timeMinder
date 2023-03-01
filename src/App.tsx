@@ -26,7 +26,7 @@ function App() {
               fontFamily: 'monospace',
               color: 'inherit',
             }}> No page views </ Typography>
-            :  <TimeTable rows={rows}/>
+            :  <TimeTable rows={rows} />
           }
       </body>
     </div>

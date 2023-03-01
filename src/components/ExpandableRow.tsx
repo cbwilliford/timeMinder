@@ -21,11 +21,11 @@ export default function ExpandableRow(props: { row: Hostname }) {
     try{
       return new URL(url).pathname
     } catch(err) {
-      console.log(url)
       console.error(err)
     }
-
   }
+
+  const pagePathCharLimit = 40;
 
   return (
     <React.Fragment>
@@ -59,16 +59,14 @@ export default function ExpandableRow(props: { row: Hostname }) {
                       <TableRow key={page.url}>
                         <TableCell component="th" scope="row">
                           <Link href={path}>
-                            {(path!.length < 50)
+                            {(path!.length < pagePathCharLimit)
                             ? path
-                            : `${path!.slice(0, 50)}...`}</Link>
+                            : `${path!.slice(0, pagePathCharLimit)}...`}</Link>
                         </TableCell>
                         <TableCell>{page.msElapsed}</TableCell>
                       </TableRow>
                     )
                   }
-
-
                   )}
                 </TableBody>
               </Table>

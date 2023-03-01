@@ -21,4 +21,5 @@ export interface StorageCache {
   lastUpdated: number,
   hostnames: Hostnames,
   secondsOffset?: number
+  msElapsed: number
 }
