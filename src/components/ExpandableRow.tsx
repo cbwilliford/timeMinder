@@ -8,6 +8,7 @@ import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {Hostname, Page} from '../types';
@@ -15,6 +16,16 @@ import {Hostname, Page} from '../types';
 export default function ExpandableRow(props: { row: Hostname }) {
   const { row } = props;
   const [open, setOpen] = React.useState(false);
+
+  const pagePath = (url: string) => {
+    try{
+      return new URL(url).pathname
+    } catch(err) {
+      console.log(url)
+      console.error(err)
+    }
+
+  }
 
   return (
     <React.Fragment>
@@ -34,7 +45,7 @@ export default function ExpandableRow(props: { row: Hostname }) {
         <TableCell>{row.msElapsed}</TableCell>
       </TableRow>
       <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0, maxWidth: 300}} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Typography variant="h6" gutterBottom component="div">
@@ -42,14 +53,23 @@ export default function ExpandableRow(props: { row: Hostname }) {
               </Typography>
               <Table size="small" aria-label="pages">
                 <TableBody>
-                  {row.pages!.map((page: Page) => (
-                    <TableRow key={page.url}>
-                      <TableCell component="th" scope="row">
-                        {page.url}
-                      </TableCell>
-                      <TableCell>{page.msElapsed}</TableCell>
-                    </TableRow>
-                  ))}
+                  {row.pages!.map((page: Page) => {
+                    const path = pagePath(page.url!)
+                    return (
+                      <TableRow key={page.url}>
+                        <TableCell component="th" scope="row">
+                          <Link href={path}>
+                            {(path!.length < 50)
+                            ? path
+                            : `${path!.slice(0, 50)}...`}</Link>
+                        </TableCell>
+                        <TableCell>{page.msElapsed}</TableCell>
+                      </TableRow>
+                    )
+                  }
+
+
+                  )}
                 </TableBody>
               </Table>
             </Box>

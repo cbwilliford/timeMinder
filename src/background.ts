@@ -2,11 +2,6 @@ import {Hostname, StorageCache} from './types';
 
 // use chrome alarms for weekly updates and restarting daily count? https://developer.chrome.com/docs/extensions/reference/alarms/
 
-
-// Don't actually count every second. Simply use Date.now() when starting count and subtract difference of Date.now() when ending count.
-// https://stackoverflow.com/questions/29971898/how-to-create-an-accurate-timer-in-javascript
-
-
 const storageCache: StorageCache = {
   activePage: {
     url: undefined,
@@ -23,7 +18,6 @@ const initStorageCache = chrome.storage.local.get(null).then((storage) => {
   Object.assign(storageCache, storage);
 });
 
-
 const createHostname = (hostname: string, msElapsed: number, favicon: string | undefined): Hostname => {
   return {
     hostname,
@@ -32,7 +26,6 @@ const createHostname = (hostname: string, msElapsed: number, favicon: string | u
     pages: []
   }
 }
-
 
 const storeActivePage = (storageCache: StorageCache) =>  {
     const {activePage, lastUpdated, hostnames} = storageCache;
@@ -50,8 +43,8 @@ const storeActivePage = (storageCache: StorageCache) =>  {
     hostnameObj.msElapsed =+ msElapsed;
     // 4. add page to hostname
     storageCache.hostnames[hostname] = hostnameObj;
+    // ADD: top-level key in storage for 'totalMsElapsed'. Update that here to avoid summing all msElapsed values on every render.
 }
-
 
 
 const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
@@ -69,6 +62,7 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
     if (!tab.url.match(/.+\..+/)) return // exclude chrome protocol urls, go links, etc.
     const {url, title, favIconUrl} = tab;
     const newHostname = new URL(url!).hostname
+
     // build new active tab to begin tracking this in storage
     const newActivePage = {
       url,
@@ -87,10 +81,10 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
 
     console.log('storageCache: ', storageCache)
     storeActivePage(storageCache);
-
     storageCache.activePage = newActivePage;
     storageCache.lastUpdated = Date.now();
-    // 7. save storageCache to storage.local
+
+    // save storageCache to storage.local
     chrome.storage.local.set(storageCache)
   } catch (error) {
     console.error(error);
@@ -101,15 +95,11 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
 
 chrome.tabs.onUpdated.addListener((tabId, change, tab) => {
   if (change.status !== 'complete') return;
-  console.log('Tab updated to ', tab);
-
   updateActivePage(tab);
 });
 
 
 chrome.tabs.onActivated.addListener(activeInfo => {
-  console.log('Tab changed to ', activeInfo);
-
   updateActivePage(null);
 });
 
