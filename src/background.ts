@@ -50,7 +50,7 @@ const storeActivePage = (storageCache: StorageCache) =>  {
 
     hostnameObj.msElapsed += msElapsed;
     // 4. add page to hostname
-    storageCache.hostnames[hostname] = hostnameObj;
+    hostnames[hostname] = hostnameObj;
     // Update total msElapsed to avoid summing all msElapsed values on every render.
     storageCache.msElapsed += msElapsed;
 }

@@ -26,7 +26,11 @@ export default function ExpandableRow(props: { row: Hostname }) {
     }
   }
 
-  const pagePathCharLimit = 40;
+  const pagePathCharLimit = 75;
+
+  const sortPages = (pages: Page[]) => {
+    return pages.sort((a,b) => b.msElapsed - a.msElapsed);
+  }
 
   return (
     <React.Fragment>
@@ -54,12 +58,12 @@ export default function ExpandableRow(props: { row: Hostname }) {
               </Typography>
               <Table size="small" aria-label="pages">
                 <TableBody>
-                  {row.pages!.map((page: Page) => {
+                  {sortPages(row.pages!).map((page: Page) => {
                     const path = pagePath(page.url!)
                     return (
                       <TableRow key={page.url}>
-                        <TableCell component="th" scope="row">
-                          <Link href={path}>
+                        <TableCell component="th" scope="row" style={{"minWidth": 210}}>
+                          <Link href={path} style={{"wordBreak": "break-all"}}>
                             {(path!.length < pagePathCharLimit)
                             ? path
                             : `${path!.slice(0, pagePathCharLimit)}...`}</Link>
