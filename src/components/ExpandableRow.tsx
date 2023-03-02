@@ -12,6 +12,7 @@ import Link from '@mui/material/Link';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import {Hostname, Page} from '../types';
+import {formatTime} from '../utils/utils'
 
 export default function ExpandableRow(props: { row: Hostname }) {
   const { row } = props;
@@ -42,7 +43,7 @@ export default function ExpandableRow(props: { row: Hostname }) {
         <TableCell component="th" scope="row">
           {row.hostname}
         </TableCell>
-        <TableCell>{row.msElapsed}</TableCell>
+        <TableCell>{formatTime(row.msElapsed)}</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0, maxWidth: 300}} colSpan={6}>
@@ -63,7 +64,7 @@ export default function ExpandableRow(props: { row: Hostname }) {
                             ? path
                             : `${path!.slice(0, pagePathCharLimit)}...`}</Link>
                         </TableCell>
-                        <TableCell>{page.msElapsed}</TableCell>
+                        <TableCell>{formatTime(page.msElapsed)}</TableCell>
                       </TableRow>
                     )
                   }
