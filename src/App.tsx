@@ -6,10 +6,17 @@ import { Typography } from '@mui/material';
 
 function App() {
   const [rows, setRows] = useState<{[key: string]: Hostname}>()
+  const [totalMsElapsed, setTotalMsElapsed] = useState()
 
   useEffect(() => {
-    chrome.storage.local.get("hostnames")
-    .then(storage => setRows(storage.hostnames))
+    (async ()=>{
+      await chrome.runtime.sendMessage({action: "extensionOpen"})
+      const storage = await chrome.storage.local.get(null)
+      const {hostnames, msElapsed} = storage
+
+      setRows(hostnames)
+      setTotalMsElapsed(msElapsed)
+    })();
   }, []);
 
   return (
@@ -26,7 +33,7 @@ function App() {
               fontFamily: 'monospace',
               color: 'inherit',
             }}> No page views </ Typography>
-            :  <TimeTable rows={rows} />
+            :  <TimeTable rows={rows} totalMsElapsed={totalMsElapsed!} />
           }
       </body>
     </div>

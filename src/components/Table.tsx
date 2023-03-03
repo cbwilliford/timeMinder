@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,15 +11,8 @@ import {formatTime} from '../utils/utils'
 
 
 
-export default function TimeTable(props:{rows: Hostnames}) {
-  const [totalMsElapsed, setTotalMsElapsed] = useState()
-
-  useEffect(() => {
-    chrome.storage.local.get("msElapsed")
-    .then(storage => setTotalMsElapsed(storage.msElapsed))
-  }, []);
-
-  const rows = props.rows;
+export default function TimeTable(props:{rows: Hostnames, totalMsElapsed: number}) {
+  const {rows, totalMsElapsed} = props;
 
   const sortHostnames = (obj: {[key:string]: Hostname}) => {
     const hostnameEntries = Object.entries(obj);

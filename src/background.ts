@@ -68,10 +68,12 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
     if(newActiveTab) {
       tab = newActiveTab;
     } else {
-      // changing tabs and windows doesn't send a tab object, so must query to get tab
+      // changing tabs and windows doesn't send a tab object, must query to get tab
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
       tab = tabs[0]
     }
+
+    if (typeof tab === 'undefined') return // tab is undefined when refreshing extension popup's dev tools
     if (typeof tab.url === 'undefined') return
     if (!tab.url.match(/.+\..+/)) return // exclude chrome protocol urls, go links, etc.
     const {url, title, favIconUrl} = tab;
@@ -88,12 +90,10 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
     // init newActivePage's hostname in hostnames
     if (!storageCache.hostnames[newHostname]){
       const newHostnameObject = createHostname(newHostname, 0, favIconUrl)
-      console.log('newHostnameObject: ', newHostnameObject)
+      newHostnameObject.pages.push(newActivePage)
       storageCache.hostnames[newHostname] = newHostnameObject;
     }
 
-
-    console.log('storageCache: ', storageCache)
     storeActivePage(storageCache);
     storageCache.activePage = newActivePage;
     storageCache.lastUpdated = Date.now();
@@ -110,7 +110,6 @@ chrome.tabs.onUpdated.addListener((tabId, change, tab) => {
   if (change.status !== 'complete') return;
   updateActivePage(tab);
 });
-
 
 chrome.tabs.onActivated.addListener(activeInfo => {
   updateActivePage(null);
@@ -139,3 +138,10 @@ chrome.idle.onStateChanged.addListener(() => {
   // https://developer.chrome.com/docs/extensions/reference/idle/
 
 })
+
+
+chrome.runtime.onMessage.addListener((message) => {
+  if(message.action === 'extensionOpen') {
+    updateActivePage(null);
+  }}
+);

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState} from 'react';
 import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
@@ -16,7 +16,7 @@ import {formatTime} from '../utils/utils'
 
 export default function ExpandableRow(props: { row: Hostname }) {
   const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
 
   const pagePath = (url: string) => {
     try{
