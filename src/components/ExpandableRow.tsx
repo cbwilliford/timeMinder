@@ -63,7 +63,7 @@ export default function ExpandableRow(props: { row: Hostname }) {
                     return (
                       <TableRow key={page.url}>
                         <TableCell component="th" scope="row" style={{"minWidth": 210}}>
-                          <Link href={path} style={{"wordBreak": "break-all"}}>
+                          <Link href={page.url} style={{"wordBreak": "break-all"}} target="_blank" rel="noopener">
                             {(path!.length < pagePathCharLimit)
                             ? path
                             : `${path!.slice(0, pagePathCharLimit)}...`}</Link>
