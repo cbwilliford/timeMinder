@@ -5,7 +5,7 @@ import {Hostname, StorageCache} from './types';
 const storageCache: StorageCache = {
   activePage: {
     url: undefined,
-    msElapsed: Date.now(),
+    msElapsed: 0,
     title: '',
     visits: 1
     },
@@ -34,10 +34,11 @@ const storeActivePage = (storageCache: StorageCache) =>  {
     // Update the current activePage and store it in hostnames
     const {hostname} = new URL(activePage.url!)
     // 1. calc time elapsed
-    let msElapsed = Date.now() - lastUpdated;
+    const now = Date.now();
+    let msElapsed = now - lastUpdated;
     // accountfor offset from idle/unfocus
     if (idleTime > 0){
-      msElapsed -= (Date.now() - idleTime)
+      msElapsed -= (now - idleTime)
       storageCache.idleTime = 0;
     }
     // 2. Update activePage
@@ -90,7 +91,6 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
     // init newActivePage's hostname in hostnames
     if (!storageCache.hostnames[newHostname]){
       const newHostnameObject = createHostname(newHostname, 0, favIconUrl)
-      newHostnameObject.pages.push(newActivePage)
       storageCache.hostnames[newHostname] = newHostnameObject;
     }
 
@@ -107,7 +107,7 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
 
 
 chrome.tabs.onUpdated.addListener((tabId, change, tab) => {
-  if (change.status !== 'complete') return;
+  if (change.status !== 'complete' || tab.active === false) return;
   updateActivePage(tab);
 });
 
