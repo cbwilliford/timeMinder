@@ -9,7 +9,7 @@ export interface Hostname {
     hostname: string,
     msElapsed: number,
     favicon: string | undefined,
-    pages?: Page[]
+    pages: Page[]
 }
 
 export interface Hostnames {
@@ -20,6 +20,6 @@ export interface StorageCache {
   activePage: Page,
   lastUpdated: number,
   hostnames: Hostnames,
-  secondsOffset?: number
+  idleTime: number
   msElapsed: number
 }

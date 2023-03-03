@@ -58,7 +58,7 @@ export default function ExpandableRow(props: { row: Hostname }) {
               </Typography>
               <Table size="small" aria-label="pages">
                 <TableBody>
-                  {sortPages(row.pages!).map((page: Page) => {
+                  {sortPages(row.pages).map((page: Page) => {
                     const path = pagePath(page.url!)
                     return (
                       <TableRow key={page.url}>

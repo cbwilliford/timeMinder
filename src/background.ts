@@ -11,7 +11,7 @@ const storageCache: StorageCache = {
     },
   lastUpdated: Date.now(),
   hostnames: {},
-  secondsOffset: 0,
+  idleTime: 0,
   msElapsed: 0,
 };
 
@@ -29,23 +29,28 @@ const createHostname = (hostname: string, msElapsed: number, favicon: string | u
 }
 
 const storeActivePage = (storageCache: StorageCache) =>  {
-    const {activePage, lastUpdated, hostnames} = storageCache;
+    const {activePage, lastUpdated, hostnames, idleTime} = storageCache;
     if (typeof activePage.url === 'undefined') return;
     // Update the current activePage and store it in hostnames
     const {hostname} = new URL(activePage.url!)
     // 1. calc time elapsed
-    const msElapsed = Date.now() - lastUpdated; // this does not yet account for offset from idle/unfocus
+    let msElapsed = Date.now() - lastUpdated;
+    // accountfor offset from idle/unfocus
+    if (idleTime > 0){
+      msElapsed -= (Date.now() - idleTime)
+      storageCache.idleTime = 0;
+    }
     // 2. Update activePage
     activePage.msElapsed = msElapsed;
     // 3. Update hostname obj or locate it on storageCache
     const hostnameObj = hostnames[hostname]
-    const existingPage = hostnameObj.pages!.find(page => page.url === activePage.url);
+    const existingPage = hostnameObj.pages.find(page => page.url === activePage.url);
     if (existingPage) {
       // Merge page views by URL: msElapsed & visits
       existingPage.msElapsed += msElapsed;
       existingPage.visits ++;
     } else {
-      hostnameObj.pages!.push(activePage)
+      hostnameObj.pages.push(activePage)
     }
 
     hostnameObj.msElapsed += msElapsed;
@@ -70,7 +75,7 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
     if (typeof tab.url === 'undefined') return
     if (!tab.url.match(/.+\..+/)) return // exclude chrome protocol urls, go links, etc.
     const {url, title, favIconUrl} = tab;
-    const newHostname = new URL(url!).hostname
+    const newHostname = new URL(url!).hostname;
 
     // build new active tab to begin tracking this in storage
     const newActivePage = {
@@ -101,7 +106,6 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
 };
 
 
-
 chrome.tabs.onUpdated.addListener((tabId, change, tab) => {
   if (change.status !== 'complete') return;
   updateActivePage(tab);
@@ -112,15 +116,18 @@ chrome.tabs.onActivated.addListener(activeInfo => {
   updateActivePage(null);
 });
 
-chrome.windows.onFocusChanged.addListener(windowId => {
-  console.log('Window focus changed to ', windowId);
+chrome.windows.onFocusChanged.addListener(async windowId => {
   if (windowId > 0) {
     updateActivePage(null);
   } else {
-    console.log('Not focused on chrome tab')
-    // set idle time here
-    // this returns chrome.windows.WINDOW_ID_NONE when all chrome windows lose focus
-    // https://developer.chrome.com/docs/extensions/reference/windows/#event-onFocusChanged
+  // Focus leaves Chrome window
+    try {
+      await initStorageCache;
+      chrome.storage.local.set({idleTime: Date.now()})
+      .then(() => console.log('idle time set'))
+    } catch(err) {
+      console.error(err)
+    }
   }
 });
 
