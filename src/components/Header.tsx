@@ -25,7 +25,7 @@ export default function ResponsiveAppBar() {
               textDecoration: 'none',
             }}
           >
-            TimeFinder
+            TimeMinder
           </Typography>
         </Toolbar>
       </Container>
