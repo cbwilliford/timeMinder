@@ -45,7 +45,8 @@ export default function ExpandableRow(props: { row: Hostname }) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.hostname}
+          <img src={row.favicon} alt={row.hostname} height={12} width={12} style={{marginRight: "10px"}} />
+          <Typography variant="body1" component="span">{row.hostname}</Typography>
         </TableCell>
         <TableCell>{formatTime(row.msElapsed)}</TableCell>
       </TableRow>
