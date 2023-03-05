@@ -30,14 +30,12 @@ const createHostname = (hostname: string, msElapsed: number, favicon: string | u
 
 const verifyFavicon = async (faviconUrl: string | undefined) => {
   let favicon = chrome.runtime.getURL('../globe_icon.png')
-  if (faviconUrl === null || undefined) return favicon;
+  if (faviconUrl === null || typeof faviconUrl === 'undefined') return favicon;
   try{
-    await fetch(faviconUrl!)
-    .then(response => {
-      if (response.statusText === 'OK') {
-        favicon = faviconUrl!;
-      }
-    })
+    const response = await fetch(faviconUrl!)
+    if (response.status === 200) {
+      favicon = faviconUrl!;
+    }
   } catch(err){
     console.error(err)
   } finally {
@@ -91,8 +89,7 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
       tab = tabs[0]
     }
 
-    if (typeof tab === 'undefined') return // tab is undefined when refreshing extension popup's dev tools
-    if (typeof tab.url === 'undefined') return
+    if (typeof tab === 'undefined'|| typeof tab.url === 'undefined') return // tab is undefined when refreshing extension popup's dev tools
     if (!tab.url.match(/.+\..+/)) return // exclude chrome protocol urls, go links, etc.
     const {url, title, favIconUrl} = tab;
     const newHostname = new URL(url!).hostname;
