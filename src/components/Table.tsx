@@ -24,7 +24,7 @@ export default function TimeTable(props:{rows: Hostnames, totalMsElapsed: number
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <TableContainer sx={{ maxHeight: 500 }}>
-        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 375}} aria-label="simple table">
+        <Table stickyHeader sx={{ maxWidth: 500, minWidth: 400}} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell align="left"></TableCell>
