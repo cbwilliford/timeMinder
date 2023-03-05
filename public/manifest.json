@@ -24,5 +24,11 @@
     },
     "default_title": "HubSpot Network Requests",
     "default_popup": "index.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "globe_icon.png"],
+      "matches": [ "<all_urls>" ]
   }
+  ]
 }

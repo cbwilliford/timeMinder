@@ -28,6 +28,23 @@ const createHostname = (hostname: string, msElapsed: number, favicon: string | u
   }
 }
 
+const verifyFavicon = async (faviconUrl: string | undefined) => {
+  let favicon = chrome.runtime.getURL('../globe_icon.png')
+  if (faviconUrl === null || undefined) return favicon;
+  try{
+    await fetch(faviconUrl!)
+    .then(response => {
+      if (response.statusText === 'OK') {
+        favicon = faviconUrl!;
+      }
+    })
+  } catch(err){
+    console.error(err)
+  } finally {
+    return favicon
+  }
+}
+
 const storeActivePage = (storageCache: StorageCache) =>  {
     const {activePage, lastUpdated, hostnames, idleTime} = storageCache;
     if (typeof activePage.url === 'undefined') return;
@@ -90,7 +107,8 @@ const updateActivePage = async (newActiveTab: chrome.tabs.Tab | null) => {
 
     // init newActivePage's hostname in hostnames
     if (!storageCache.hostnames[newHostname]){
-      const newHostnameObject = createHostname(newHostname, 0, favIconUrl)
+      const favicon = await verifyFavicon(favIconUrl)
+      const newHostnameObject = createHostname(newHostname, 0, favicon)
       storageCache.hostnames[newHostname] = newHostnameObject;
     }
 
